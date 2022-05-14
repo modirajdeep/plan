@@ -1,0 +1,13 @@
+/* Add application styles & imports to this file! */
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&display=swap');
+
+* {
+  font-family: 'Fira Sans', sans-serif;
+}
+
+input.text {
+  border: none;
+  border-bottom: 1px solid black;
+  width: 100%;
+}

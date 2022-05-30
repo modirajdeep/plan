@@ -47,7 +47,7 @@ export const getRow = (pathVar: string, key: string, value, that: PreviewCompone
             if (momentInstance.clone().startOf('day').valueOf() === momentInstance.valueOf()) {
                 format = "DD MMM YYYY"
             }
-            result.dateTimeStr = momentInstance.format(format)
+            result.title = momentInstance.format(format);
         }
     } else if (ObjectType == result.type) { // JS objects
         if (Array.isArray(value)) { // lists
@@ -57,7 +57,7 @@ export const getRow = (pathVar: string, key: string, value, that: PreviewCompone
             result.valueMap = value.map((v, i) => generateSchema(v, `${result.pathVar}[${i}]`, that));
             if (ObjectType == result.type) { // list of objects
                 result.value = value.map(v => sortObject(v))
-                result.jsonString = value.map(v => stringifyJSON(v, that));
+                result.jsonString = result.valueMap.map(m => stringifyJSON(m, that));
                 result.listSummary += '&#123;&nbsp;' + result.jsonString[0].slice(0, -2);
                 let columns = [];
                 let objectKeys = Object.keys(result.value[0]);
@@ -74,41 +74,37 @@ export const getRow = (pathVar: string, key: string, value, that: PreviewCompone
                 }
                 result.columns = columns;
             } else if (NonObjectTypes.includes(result.type)) { // list of non objects
-                result.listSummary += value.map(v => htmlOutput(v)).toString();
+                result.listSummary += summarizeList(result.valueMap.map((v, i) => htmlOutput(v, i)));
             }
             // TODO list of lists
         } else { // objects
             result.template = ObjectType;
             result.value = sortObject(result.value);
             result.valueMap = generateSchema(result.value, result.pathVar, that);
-            result.jsonString = stringifyJSON(result.value, that);
+            result.jsonString = stringifyJSON(result.valueMap, that);
         }
         result.listSummary += '&nbsp;]';
     }
     return result;
 }
 
-export const stringifyJSON = (obj, that: PreviewComponent) => {
+export const stringifyJSON = (map, that: PreviewComponent) => {
     let maxKeys = MaxKeys;
-    const objectKeys = Object.keys(obj).sort(customSort);
+    const objectKeyCount = map.length;
     let response = ' ';
-    // if (obj.title == 'Open Shifts') {
-    //   console.log({ objectKeys })
-    // }
-    if (objectKeys.length < maxKeys) maxKeys = objectKeys.length;
+    if (objectKeyCount < maxKeys) maxKeys = objectKeyCount;
     for (let i = 0; i < maxKeys; i++) {
-        const key = objectKeys[i];
-        let value = obj[key];
+        let { value, key } = map[i];
         if (that.hideNa && isUndefined(value)) {
             if (maxKeys <= (MaxKeys * 1.8)) maxKeys++;
         } else {
-            response += `${key} : ${htmlOutput(value)}`;
-            if (i < (objectKeys.length - 1) && i < maxKeys - 1) {
+            response += `${key} : ${htmlOutput(map[i], i)}`;
+            if (i < (objectKeyCount - 1) && i < maxKeys - 1) {
                 response += ', '
             }
         }
     }
-    if (objectKeys.length > maxKeys) {
+    if (objectKeyCount > maxKeys) {
         let ellipsisString = response.charAt(response.length - 2) == ',' ? '... } ,' : ', ... } ,';
         response += ellipsisString;
     } else {
@@ -116,26 +112,57 @@ export const stringifyJSON = (obj, that: PreviewComponent) => {
     }
     return response;
 }
-
-
-export const htmlOutput = (value) => {
-    let styleClass = 'clr-black';
-    const isString = typeof value == 'string';
-    if (Array.isArray(value)) {
-        value = '[ .. ]';
-    } else if (isUndefined(value)) {
-        value = 'na'
-        styleClass = 'clr-na';
-    } else if (ObjectType == typeof value) {
-        value = '{ .. }';
-    } else if (typeof value == 'boolean') {
-        styleClass = 'clr-blue';
+// html generation
+const wrapQuotes = (string) => `"${string}"`
+const applyAttribute = (htmlAttribute, value) => `${htmlAttribute}="${Array.isArray(value) ? value.join(' ') : value}"`; // class="a b"
+const summarizeList = (list) => list.join(', ').replace(/, ([^,]*)$/, ' and $1'); // 1, 2 and 3
+const createElement = (element, attributes, content) => {
+    const attributeString = Object.keys(attributes).map(key => applyAttribute(key, attributes[key])).join(' ');
+    return `<${element} ${attributeString}>${content}</${element}>` // <a href="url">link</a>
+}
+export const htmlOutput = (row, index?) => {
+    const { value, pathVar, type, title, url, template, stringType } = row;
+    let content = value;
+    let element = 'span';
+    let attributes: any = {
+        class: ['clr-black', 'fw-700'],
+        'data-target': pathVar,
     }
-    return `${isString ? '"' : ''}<span class="fw-700 ${styleClass}">${value}</span>${isString ? '"' : ''}`
+    if (index) {
+        attributes['data-index'] = index;
+    }
+    const isString = type == 'string';
+    if (template == 'list') {
+        content = '[ .. ]';
+    } else if (template == 'na') {
+        content = 'na'
+        attributes.class[0] = 'clr-na';
+    } else if (ObjectType == template) {
+        content = '{ .. }';
+    } else if (type == 'boolean') {
+        attributes.class[0] = 'clr-blue';
+    }
+    if (isString) {
+        if (title) {
+            attributes.title = title;
+        }
+        if (stringType == 'datetime') {
+            attributes.class[0] = 'clr-date';
+        } else if (stringType == 'url') {
+            attributes.class = ['fw-700'];
+            element = 'a';
+            attributes.href = url;
+            attributes.target = '_blank';
+        }
+    }
+    let result = createElement(element, attributes, content);
+    if (isString) {
+        result = wrapQuotes(result);
+    }
+    return result;
 }
 
 // validations
-
 export const isURL = (str) => {
     const pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
         '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name

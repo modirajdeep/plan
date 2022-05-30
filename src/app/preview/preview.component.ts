@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NbMenuItem, NbToastrService } from '@nebular/theme';
 import { AppService } from '../app.service';
 import { initialize, TestJSON, contextMenuHandler, handleError, handleAction, JsonActions } from './helpers';
+import { htmlOutput } from './worker'
 
 import { NbSortDirection, NbSortRequest, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
 
@@ -76,6 +77,9 @@ export class PreviewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.appServiceSub.unsubscribe();
     this.queryParamsSub.unsubscribe();
+  }
+  htmlOutput(row, index?) {
+    return htmlOutput(row, index);
   }
 
   toggleAccordion(event, row) {

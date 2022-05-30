@@ -154,15 +154,8 @@
         {{row.key}}&nbsp; :&nbsp;
     </span>
     <!-- <input *ngIf="row.key != 'color'" nbInput [value]="row.value" [type]="row.type" /> -->
-    <span [attr.data-target]="row.pathVar" [contenteditable]="isEdit">
-        <span [attr.data-target]="row.pathVar" *ngIf="row.type == 'string'">"</span><span
-            [attr.data-target]="row.pathVar" [class.clr-blue]="row.type == 'boolean'"
-            [class.clr-na]="row.template == 'na'" [class.clr-date]="row.dateTimeStr" *ngIf="!row.url" class="fw-700"
-            [title]="row.dateTimeStr ?
-            row.dateTimeStr : ''">{{row.value}}</span><a [attr.data-target]="row.pathVar" *ngIf="row.url"
-            [href]="row.url" class="fw-700" target="_blank">{{row.value}}</a><span [attr.data-target]="row.pathVar"
-            *ngIf="row.type == 'string'">"</span>
-    </span>,
+    <!-- {{htmlOutput(row)}} -->
+    <span [innerHTML]="htmlOutput(row)"> </span>
     <input *ngIf="isEdit && row.key == 'color'" type="color" [value]="'#'+row.value">
     <!-- </div> -->
     <!-- <div *ngIf="row.type == 'boolean'">

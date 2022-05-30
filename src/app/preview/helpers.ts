@@ -71,25 +71,25 @@ export const TestJSON = {
     color: 'A77179',
     pronoun: 'He/Him',
     nationality: { name: 'Indian', color: '000080' },
-    // profiles: [
-    //     { name: 'LinkedIn', url: 'https://www.linkedin.com/in/modirajdeep/' },
-    //     { name: 'GitHub', url: 'https://github.com/modirajdeep' },
-    //     { name: 'Instagram', url: 'https://www.instagram.com/modirajdeep/' },
-    //     { name: 'Facebook', url: 'https://www.facebook.com/modirajdeep/' }
-    // ],
-    // email: [
-    //     { name: 'Personal', id: 'modi.rajdeep@gmail.com' },
-    //     { name: 'Office', id: 'rajdeep.modi@wtsenergy.com' }
-    // ],
-    // address: {
-    //     city: 'The Hague',
-    //     country: 'The Netherlands',
-    //     color: 'FF9B00',
-    // },
-    // call: [
-    //     { type: "office", number: "+31629173380" },
-    //     { type: "personal", number: "+919015502234" }
-    // ],
+    profiles: [
+        { name: 'LinkedIn', url: 'https://www.linkedin.com/in/modirajdeep/' },
+        { name: 'GitHub', url: 'https://github.com/modirajdeep' },
+        { name: 'Instagram', url: 'https://www.instagram.com/modirajdeep/' },
+        { name: 'Facebook', url: 'https://www.facebook.com/modirajdeep/' }
+    ],
+    email: [
+        { name: 'Personal', id: 'modi.rajdeep@gmail.com' },
+        { name: 'Office', id: 'rajdeep.modi@wtsenergy.com' }
+    ],
+    address: {
+        city: 'The Hague',
+        country: 'The Netherlands',
+        color: 'FF9B00',
+    },
+    call: [
+        { type: "office", number: "+31629173380" },
+        { type: "personal", number: "+919015502234" }
+    ],
     test: null,
     luckyNumbers: [1, 12, 16, 9],
     wishlist: ['apples', 'mangoes'],

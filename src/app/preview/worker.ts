@@ -38,6 +38,9 @@ export const getRow = (pathVar: string, key: string, value, that: PreviewCompone
         if (isURL(result.value)) {
             result.stringType = 'url';
             result.url = result.value;
+        } else if (isEmail(result.value)) {
+            result.stringType = 'url';
+            result.url = 'mailto:' + result.value;
         } else if (canCall(result.value)) {
             result.stringType = 'url';
             result.url = 'tel:' + result.value;
@@ -116,8 +119,9 @@ export const stringifyJSON = (map, that: PreviewComponent) => {
 const wrapQuotes = (string) => `"${string}"`
 const applyAttribute = (htmlAttribute, value) => `${htmlAttribute}="${Array.isArray(value) ? value.join(' ') : value}"`; // class="a b"
 const summarizeList = (list) => list.join(', ').replace(/, ([^,]*)$/, ' and $1'); // 1, 2 and 3
-const createElement = (element, attributes, content) => {
-    const attributeString = Object.keys(attributes).map(key => applyAttribute(key, attributes[key])).join(' ');
+const createElement = (element, attributes, content, data) => {
+    let attributeString = Object.keys(attributes).map(key => applyAttribute(key, attributes[key])).join(' '); // TODO merge as 1 line
+    attributeString += Object.keys(data).map(attribute => applyAttribute(`data-${attribute}`, data[attribute])).join(' '); // TODO merge as 1 line
     return `<${element} ${attributeString}>${content}</${element}>` // <a href="url">link</a>
 }
 export const htmlOutput = (row, index?) => {
@@ -126,10 +130,12 @@ export const htmlOutput = (row, index?) => {
     let element = 'span';
     let attributes: any = {
         class: ['clr-black', 'fw-700'],
-        'data-target': pathVar,
+    }
+    let data: any = {
+        target: pathVar
     }
     if (index) {
-        attributes['data-index'] = index;
+        data.index = index;
     }
     const isString = type == 'string';
     if (template == 'list') {
@@ -155,10 +161,11 @@ export const htmlOutput = (row, index?) => {
             attributes.target = '_blank';
         }
     }
-    let result = createElement(element, attributes, content);
+    let result = createElement(element, attributes, content, data);
     if (isString) {
         result = wrapQuotes(result);
     }
+    result = createElement('span', {}, result, data);
     return result;
 }
 
@@ -171,6 +178,10 @@ export const isURL = (str) => {
         '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
         '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
     return !!pattern.test(str);
+}
+export const isEmail = (email) => {
+    const pattern = /\S+@\S+\.\S+/;
+    return !!pattern.test(email);
 }
 
 export const canCall = str => {

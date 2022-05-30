@@ -38,6 +38,7 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { AppRoutingModule } from './app-routing.module';
 import { PreviewComponent } from './preview/preview.component';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
+import { SafeHtmlPipe } from './safe-html.pipe';
 
 const ToastrConfig: any = {
   position: 'bottom-end',
@@ -91,6 +92,7 @@ const WindowConfig: any = {
     PlanFormComponent,
     PreviewComponent,
     ContextMenuComponent,
+    SafeHtmlPipe,
   ],
   bootstrap: [AppComponent],
   providers: [NbThemeService]

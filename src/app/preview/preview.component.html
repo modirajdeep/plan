@@ -17,7 +17,7 @@
                 <div [attr.data-target]="row.pathVar" (click)="row.expanded = !row.expanded" class="clr-url ellipsis"
                     [class.active]="row.expanded" [style.border-color]="'#'+row.value.color">
                     <span [attr.data-target]="row.pathVar" [title]="row.pathVar">{{row.key}}&nbsp;:&nbsp;&#123;</span>
-                    <span [attr.data-target]="row.pathVar" *ngIf="!row.expanded" [innerHTML]="row.jsonString"></span>
+                    <span [attr.data-target]="row.pathVar" *ngIf="!row.expanded" [innerHTML]="row.jsonString | safeHtml"></span>
                 </div>
                 <div [attr.data-target]="row.pathVar" class="acc" [class.active]="row.expanded"
                     [style.border-color]="'#'+row.value.color">
@@ -37,7 +37,7 @@
                     <span [attr.data-target]="row.pathVar" [attr.data-table]="true"
                         [title]="row.pathVar">{{row.key}}&nbsp;:&nbsp;[</span>
                     <span [attr.data-target]="row.pathVar" [attr.data-table]="true" *ngIf="!row.expanded"
-                        [innerHTML]="row.listSummary"></span>
+                        [innerHTML]="row.listSummary | safeHtml"></span>
                     <span *ngIf="row.expanded && row.type == 'object'" class="meta"
                         (click)="row.tableView = !row.tableView">
                         <nb-icon class="meta-icon" [icon]="row.tableView ? 'list-outline' : 'grid-outline'"></nb-icon>
@@ -89,7 +89,7 @@
                                         <span [attr.data-target]="row.pathVar" [attr.data-index]="i"
                                             [attr.data-table]="true">&#123;&nbsp;</span>
                                         <span [attr.data-target]="row.pathVar" [attr.data-index]="i"
-                                            [attr.data-table]="true" [innerHTML]="row.jsonString[i]"></span>
+                                            [attr.data-table]="true" [innerHTML]="row.jsonString[i] | safeHtml"></span>
                                         <!-- <span class="meta">
                                         <nb-icon icon="more-horizontal-outline"
                                         [nbContextMenu]="[{title: row.pathVar+'['+(i)+']' }]"></nb-icon>
@@ -155,7 +155,7 @@
     </span>
     <!-- <input *ngIf="row.key != 'color'" nbInput [value]="row.value" [type]="row.type" /> -->
     <!-- {{htmlOutput(row)}} -->
-    <span [innerHTML]="htmlOutput(row)"> </span>
+    <span [innerHTML]="htmlOutput(row) | safeHtml"> </span>
     <input *ngIf="isEdit && row.key == 'color'" type="color" [value]="'#'+row.value">
     <!-- </div> -->
     <!-- <div *ngIf="row.type == 'boolean'">

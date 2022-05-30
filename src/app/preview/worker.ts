@@ -1,5 +1,5 @@
 import * as moment from 'moment-timezone';
-import { JsonComponent } from './json.component';
+import { PreviewComponent } from './preview.component';
 export const NonObjectTypes = ['string', 'number', 'boolean'];
 export const ObjectType = 'object';
 export const Types = {
@@ -10,7 +10,7 @@ export const Types = {
 export const MaxKeys = 8;
 export const KeySortOrder = ['id', 'title', 'label', 'username', 'name', 'value', 'type'];
 
-export const generateSchema = (json, pathVar = '', that: JsonComponent) => {
+export const generateSchema = (json, pathVar = '', that: PreviewComponent) => {
     let result = [];
     if (NonObjectTypes.includes(typeof json)) {
         result = getRow(pathVar, '', json, that);
@@ -26,7 +26,7 @@ export const generateSchema = (json, pathVar = '', that: JsonComponent) => {
     return result;
 }
 
-export const getRow = (pathVar: string, key: string, value, that: JsonComponent) => {
+export const getRow = (pathVar: string, key: string, value, that: PreviewComponent) => {
     let result: any = { key, value, type: typeof value, template: 'input' };
     result.pathVar = pathVar ? pathVar + '.' + key : key;
     // transformations
@@ -88,7 +88,7 @@ export const getRow = (pathVar: string, key: string, value, that: JsonComponent)
     return result;
 }
 
-export const stringifyJSON = (obj, that: JsonComponent) => {
+export const stringifyJSON = (obj, that: PreviewComponent) => {
     let maxKeys = MaxKeys;
     const objectKeys = Object.keys(obj).sort(customSort);
     let response = ' ';

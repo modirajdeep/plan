@@ -23,11 +23,11 @@ interface FSEntry {
 }
 
 @Component({
-  selector: 'app-json',
-  templateUrl: './json.component.html',
-  styleUrls: ['./json.component.css']
+  selector: 'app-preview',
+  templateUrl: './preview.component.html',
+  styleUrls: ['./preview.component.css']
 })
-export class JsonComponent implements OnInit, OnDestroy {
+export class PreviewComponent implements OnInit, OnDestroy {
   // Component State
   isEdit = false;
   hideNa = true;

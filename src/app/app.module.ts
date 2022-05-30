@@ -30,14 +30,13 @@ import {
 } from '@nebular/theme'
 
 import { AppComponent } from './app.component';
-import { HelloComponent } from './hello.component';
 
 import { PlanListComponent } from './plan-list/plan-list.component';
 import { PlanFormComponent } from './plan-form/plan-form.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { AppRoutingModule } from './app-routing.module';
-import { JsonComponent } from './json/json.component';
+import { PreviewComponent } from './preview/preview.component';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
 
 const ToastrConfig: any = {
@@ -88,10 +87,9 @@ const WindowConfig: any = {
   ],
   declarations: [
     AppComponent,
-    HelloComponent,
     PlanListComponent,
     PlanFormComponent,
-    JsonComponent,
+    PreviewComponent,
     ContextMenuComponent,
   ],
   bootstrap: [AppComponent],

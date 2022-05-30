@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import * as moment from 'moment-timezone';
 import { NbToastrService, NbWindowService } from '@nebular/theme';
 import { AppService } from './app.service';
-import { isURL } from './json/worker';
+import { isURL } from './preview/worker';
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',

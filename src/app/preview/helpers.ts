@@ -1,7 +1,7 @@
 import { NbMenuItem } from '@nebular/theme';
 import * as jp from 'jsonpath';
 import { generateSchema } from './worker';
-import { JsonComponent } from './json.component';
+import { PreviewComponent } from './preview.component';
 
 export interface JsonActions {
     action?: string;
@@ -10,7 +10,7 @@ export interface JsonActions {
     index: string;
 }
 
-export const initialize = (inputString, that: JsonComponent) => {
+export const initialize = (inputString, that: PreviewComponent) => {
     if (inputString) {
         let jsonData = parseJSON(inputString, that);
         if (typeof jsonData == 'string') {
@@ -29,7 +29,7 @@ export const initialize = (inputString, that: JsonComponent) => {
     }
 }
 
-export const handleAction = (params: JsonActions, that: JsonComponent) => {
+export const handleAction = (params: JsonActions, that: PreviewComponent) => {
     const { action, target, type, index } = params;
     let targetStr = target;
     if (index) {
@@ -83,7 +83,7 @@ export const TestJSON = {
     isActive: true
 }
 
-export const contextMenuHandler = (event, that: JsonComponent) => {
+export const contextMenuHandler = (event, that: PreviewComponent) => {
     that.isDisplayContextMenu = true;
     const { type, target, index, table } = event.target.dataset;
     let text = target;
@@ -138,7 +138,7 @@ export const removeEmpty = (obj) => Array.isArray(obj) ? obj : Object.entries(ob
         {}
     )
 
-export const parseJSON = (input: string, that: JsonComponent) => {
+export const parseJSON = (input: string, that: PreviewComponent) => {
     try {
         const result = JSON.parse(input);
         return result;
@@ -148,7 +148,7 @@ export const parseJSON = (input: string, that: JsonComponent) => {
     }
 }
 
-export const handleError = (that: JsonComponent, error, message?: string, debugData?) => {
+export const handleError = (that: PreviewComponent, error, message?: string, debugData?) => {
     console.log(message, debugData);
     console.error(error);
 }

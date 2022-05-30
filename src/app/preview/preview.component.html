@@ -170,43 +170,6 @@
     </div> -->
 </ng-template>
 
-<ng-template #popoverTemplate let-path="path" let-type="type">
-    <nb-list>
-        <nb-list-item>{{path}}</nb-list-item>
-        <nb-list-item>Type: {{type}}</nb-list-item>
-    </nb-list>
-</ng-template>
-
 <app-context-menu *ngIf="isDisplayContextMenu" [ngStyle]="getRightClickMenuStyle()"
     [contextMenuItems]="contextMenuItems">
 </app-context-menu>
-
-<!-- <table [nbTreeGrid]="dataSource" nbSort (sort)="changeSort($event)" equalColumnsWidth>
-
-    <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
-    <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
-
-    <ng-container [nbTreeGridColumnDef]="customColumn">
-        <th nbTreeGridHeaderCell [nbSortHeader]="getDirection(customColumn)" *nbTreeGridHeaderCellDef>
-            {{customColumn}}
-        </th>
-
-        <td nbTreeGridCell *nbTreeGridCellDef="let row">
-
-            <nb-tree-grid-row-toggle [expanded]="row.expanded" *ngIf="row.data.kind === 'dir'">
-            </nb-tree-grid-row-toggle>
-
-            {{row.data.name}}
-
-        </td>
-    </ng-container>
-
-    <ng-container *ngFor="let column of defaultColumns" [nbTreeGridColumnDef]="column">
-        <th nbTreeGridHeaderCell [nbSortHeader]="getDirection(column)" *nbTreeGridHeaderCellDef>
-            {{column}}
-        </th>
-
-        <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data[column]}}</td>
-    </ng-container>
-
-</table> -->

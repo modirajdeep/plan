@@ -57,6 +57,8 @@ export const handleAction = (params: JsonActions, that: PreviewComponent) => {
             console.log(target, index, that.output);
             that.cd.markForCheck();
             that.toastrService.show('under construction', 'view as table', { status: 'primary', icon: 'alert-triangle-outline' });
+        case 'share':
+            that.toastrService.show('under construction', 'share', { status: 'primary', icon: 'alert-triangle-outline' });
         // data.tableView = true;
     }
     that.router.navigate(['/']);
@@ -67,7 +69,18 @@ export const TestJSON = {
     age: 27,
     born: '1994-09-01T15:09:56.704Z',
     color: 'A77179',
-    profiles: [{ name: 'LinkedIn', url: 'https://www.linkedin.com/in/modirajdeep/' }],
+    pronoun: 'He/Him',
+    nationality: { name: 'Indian', color: '000080' },
+    profiles: [
+        { name: 'LinkedIn', url: 'https://www.linkedin.com/in/modirajdeep/' },
+        { name: 'GitHub', url: 'https://github.com/modirajdeep' },
+        { name: 'Instagram', url: 'https://www.instagram.com/modirajdeep/' },
+        { name: 'Facebook', url: 'https://www.facebook.com/modirajdeep/' }
+    ],
+    email: [
+        { name: 'Personal', id: 'modi.rajdeep@gmail.com' },
+        { name: 'Office', id: 'rajdeep.modi@wtsenergy.com' }
+    ],
     address: {
         city: 'The Hague',
         country: 'The Netherlands',
@@ -95,35 +108,28 @@ export const contextMenuHandler = (event, that: PreviewComponent) => {
     const status = 'info';
     let contextMenuItems: Array<NbMenuItem> = [
         {
-            title: 'Copy', expanded: true, icon: 'copy-outline',
+            title: 'copy', expanded: true, icon: 'copy-outline',
             children: [
                 {
-                    title: 'path', link,
+                    title: 'address', link,
                     badge: { text, status },
-                    queryParams: {
-                        action: 'copy-path',
-                        ...params
-                    }
+                    queryParams: { action: 'copy-path', ...params }
                 },
                 {
                     title: 'value', link,
-                    queryParams: {
-                        action: 'copy-value',
-                        ...params
-                    }
+                    queryParams: { action: 'copy-value', ...params }
                 },
             ]
+        },
+        {
+            title: 'share', icon: 'share-outline', link,
+            queryParams: { action: 'share', ...params }
         }
     ];
     if (table) {
         contextMenuItems.push({
-            title: 'view as table',
-            link,
-            icon: 'layout-outline',
-            queryParams: {
-                action: 'table-view',
-                ...params
-            }
+            title: 'view as table', icon: 'layout-outline', link,
+            queryParams: { action: 'table-view', ...params }
         })
     }
     that.contextMenuItems = contextMenuItems;

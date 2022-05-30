@@ -15,13 +15,6 @@ interface TreeNode<T> {
   expanded?: boolean;
 }
 
-interface FSEntry {
-  name: string;
-  size: string;
-  kind: string;
-  items?: number;
-}
-
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.component.html',

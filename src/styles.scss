@@ -1,24 +1,249 @@
 @use 'themes' as *;
 
-@use '@nebular/theme/styles/globals' as *;
+// @use '@nebular/theme/styles/globals' as *;
 
-@include nb-install() {
-  @include nb-theme-global();
-};
-/* Add application styles & imports to this file! */
-// @forward '@nebular/theme/styles/theming';
-// @use '@nebular/theme/styles/theming' as *;
-// @use '@nebular/theme/styles/themes/default';
+// @include nb-install() {
+//   @include nb-theme-global();
+// }
 
+// ;
 
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&display=swap');
+@forward '@nebular/theme/styles/theming';
+@use '@nebular/theme/styles/theming' as *;
+@use '@nebular/theme/styles/themes/default';
+@use '@nebular/theme/styles/themes/dark';
+
+$nb-themes: nb-register-theme(( // some styles we changed
+      text-basic-color: color-basic-800,
+      text-disabled-color: color-basic-600),
+    default,
+    default);
+
+$nb-themes: nb-register-theme(( // some styles we changed
+      text-basic-color: color-basic-800,
+      text-disabled-color: color-basic-600),
+    dark,
+    dark);
+
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&display=swap');
 
 * {
-  font-family: 'Fira Sans', sans-serif;
+  font-family: 'Work Sans', sans-serif !important;
+  // color: #654a4e !important;
+  -webkit-font-smoothing: antialiased;
+  // font-weight: normal !important;
+  transition: all 0.5s ease-in-out;
+  transition: padding 0.3s ease-in-out;
+  user-select: none;
 }
 
-input.text {
-  border: none;
-  border-bottom: 1px solid black;
+nb-card {
+  border-radius: 20px !important;
+}
+
+nb-layout-header {
+  background-color: transparent;
+}
+
+nb-layout-column {
+  line-height: 1.5;
+  color: #443235;
+  background: #e6ddde;
+  background-color: rgb(240, 231, 232);
+}
+
+.w-100 {
   width: 100%;
+}
+
+.w-98 {
+  width: 96%;
+  margin: 0 1%;
+  padding: 0 1%;
+}
+
+.p-1 {
+  padding: 0 1%;
+}
+
+.br-20 {
+  border-radius: 20px;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step-content {
+  width: 100%;
+}
+
+textarea {
+  resize: none;
+}
+
+.fw-400 {
+  font-weight: 400 !important;
+}
+
+.fw-700 {
+  font-weight: 700 !important;
+}
+
+nb-accordion-item-header {
+  font-weight: 400 !important;
+}
+
+nb-card-header {
+  font-weight: 400 !important;
+}
+
+button {
+  margin: 20px;
+}
+
+h6 {
+  margin-block-start: 0.5em;
+  margin-block-end: 0.5em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+}
+
+.focus-hover {
+  padding: 0 1%;
+}
+
+.focus-hover:hover {
+  background-color: rgba(230, 221, 222, 0.2);
+  border-radius: 20px;
+}
+
+::selection {
+  background-color: #c2e0dc;
+}
+
+.clr-blue {
+  color: #090F88;
+}
+
+.hide {
+  display: none !important;
+}
+
+a {
+  color: #1A4684 !important;
+}
+
+a:hover {
+  color: #395e91 !important;
+}
+
+.clr-url {
+  color: #2157a3 !important;
+  // text-decoration: underline;
+  cursor: pointer;
+}
+
+.clr-black {
+  color: #222b45 !important;
+}
+
+.clr-na {
+  color: #b26672 !important;
+}
+
+.clr-url:hover {
+  // color: #395e91!important;
+  background-color: #AEE9E0;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.clr-url.active {
+  background-color: #AEE9E0;
+  padding: 1rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  border: 2px solid #403A38;
+  border-bottom: none;
+}
+
+.acc {
+  height: 0px;
+  overflow: hidden;
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.acc.active {
+  height: auto;
+  border: 2px solid #403A38;
+  padding: 0.5rem 0.75rem;
+}
+
+.acc-list {
+  // padding: 0.75rem;
+  // border-bottom: 1px solid #edf1f7;
+}
+
+.p-0-75 {
+  padding: 0.75rem;
+}
+
+.clr-url .meta {
+  visibility: hidden;
+  float: right;
+  padding: 0 0.7rem;
+}
+
+.meta:hover {
+  border-radius: 0.1rem;
+  background-color: rgb(240, 231, 232);
+}
+
+.clr-url:hover .meta {
+  visibility: visible;
+}
+
+.meta .meta-icon {
+  position: absolute;
+}
+
+.meta .meta-description {
+  margin-left: 25px;
+}
+
+.clr-date {
+  color: #645fb1;
+}
+
+h6 {
+  margin: 0;
+}
+
+nb-badge {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 0.3rem;
+  /* Beginning of string */
+  direction: rtl;
+  text-align: left;
+}
+
+.nb-tree-grid-header-row,
+.nb-tree-grid-footer-row,
+.nb-tree-grid-row {
+  background: transparent !important;
+}
+
+[nbButton],
+[nbButtonToggle] {
+  text-transform: none !important;
+}
+
+.nb-theme-default nb-badge.status-basic {
+  color: #222b45;
+  background-color: #b26672 !important;
 }

@@ -1,0 +1,212 @@
+<div *ngIf="output" (contextmenu)="displayContextMenu($event); false">
+    <ng-container *ngTemplateOutlet="listTemplate;context:{output: this.output}">
+    </ng-container>
+</div>
+
+<ng-template #listTemplate let-output="output">
+    <nb-list class="w-100">
+        <nb-list-item [attr.data-target]="row.pathVar" class="w-100" *ngFor="let row of output"
+            [class.hide]="hideNa && row.template == 'na'">
+            <!-- Input -->
+            <div [attr.data-target]="row.pathVar" class="w-100" *ngIf="['input', 'na'].includes(row.template)">
+                <ng-container *ngTemplateOutlet="inputTemplate;context:{row: row}">
+                </ng-container>
+            </div>
+            <!-- Object -->
+            <div [attr.data-target]="row.pathVar" class="w-100" *ngIf="row.template == 'object'">
+                <div [attr.data-target]="row.pathVar" (click)="row.expanded = !row.expanded" class="clr-url ellipsis"
+                    [class.active]="row.expanded" [style.border-color]="'#'+row.value.color">
+                    <span [attr.data-target]="row.pathVar" [title]="row.pathVar">{{row.key}}&nbsp;:&nbsp;&#123;</span>
+                    <span [attr.data-target]="row.pathVar" *ngIf="!row.expanded" [innerHTML]="row.jsonString"></span>
+                </div>
+                <div [attr.data-target]="row.pathVar" class="acc" [class.active]="row.expanded"
+                    [style.border-color]="'#'+row.value.color">
+                    <div [attr.data-target]="row.pathVar" *ngIf="row.expanded">
+                        <ng-container *ngTemplateOutlet="listTemplate;context:{output: row.valueMap}">
+                        </ng-container>
+                    </div>
+                    <h6 [attr.data-target]="row.pathVar" class="fw-400 clr-url p-0-75" (click)="row.expanded = false">},
+                    </h6>
+                </div>
+            </div>
+            <!-- List -->
+            <div [attr.data-target]="row.pathVar" [attr.data-table]="true" *ngIf="row.template == 'list'" class="w-100">
+                <div [attr.data-target]="row.pathVar" [attr.data-table]="true" class="clr-url ellipsis"
+                    [attr.data-target]="row.pathVar" [class.active]="row.expanded"
+                    (click)="toggleAccordion($event, row)">
+                    <span [attr.data-target]="row.pathVar" [attr.data-table]="true"
+                        [title]="row.pathVar">{{row.key}}&nbsp;:&nbsp;[</span>
+                    <span [attr.data-target]="row.pathVar" [attr.data-table]="true" *ngIf="!row.expanded"
+                        [innerHTML]="row.listSummary"></span>
+                    <span *ngIf="row.expanded && row.type == 'object'" class="meta"
+                        (click)="row.tableView = !row.tableView">
+                        <nb-icon class="meta-icon" [icon]="row.tableView ? 'list-outline' : 'grid-outline'"></nb-icon>
+                        <span class="meta-description">toggle {{row.tableView ? 'list' : 'table'}}</span>
+                    </span>
+                </div>
+                <div [attr.data-target]="row.pathVar" [attr.data-table]="true" class="w-100 acc"
+                    [class.active]="row.expanded">
+                    <div [attr.data-target]="row.pathVar" [attr.data-table]="true" *ngIf="row.expanded" class="w-100">
+                        <div class="table" *ngIf="row.tableView && row.type == 'object'">
+                            <table [nbTreeGrid]="tableData(row.value)" nbSort (sort)="changeSort($event)"
+                                equalColumnsWidth>
+                                <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="row.columns"></tr>
+                                <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: row.columns"></tr>
+                                <!-- <ng-container [nbTreeGridColumnDef]="customColumn">
+                                <th nbTreeGridHeaderCell [nbSortHeader]="getDirection(customColumn)"
+                                    *nbTreeGridHeaderCellDef>
+                                    {{customColumn}}
+                                </th>
+                                <td nbTreeGridCell *nbTreeGridCellDef="let row">
+                                    <nb-tree-grid-row-toggle [expanded]="row.expanded" *ngIf="row.kind === 'dir'">
+                                    </nb-tree-grid-row-toggle>
+                                    {{row.name}}
+                                </td>
+                            </ng-container> -->
+                                <ng-container *ngFor="let column of row.columns" [nbTreeGridColumnDef]="column">
+                                    <th nbTreeGridHeaderCell [nbSortHeader]="getDirection(column)"
+                                        *nbTreeGridHeaderCellDef>
+                                        {{column}}
+                                    </th>
+                                    <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data[column]}}</td>
+                                </ng-container>
+
+                            </table>
+                        </div>
+                        <!-- List of Objects -->
+                        <nb-list [attr.data-target]="row.pathVar" [attr.data-table]="true" *ngIf="!row.tableView"
+                            class="w-100">
+                            <nb-list-item [attr.data-target]="row.pathVar" [attr.data-index]="i"
+                                [attr.data-table]="true" *ngFor="let row1 of row.valueMap;let i=index;" class="w-100">
+                                <div [attr.data-target]="row.pathVar" [attr.data-index]="i" [attr.data-table]="true"
+                                    class="w-100" *ngIf="row.type == 'object'">
+                                    <!-- Object Title -->
+                                    <div *ngIf="!row1.expanded" class="clr-url ellipsis acc-list w-100"
+                                        [attr.data-target]="row.pathVar" [attr.data-index]="i" [attr.data-table]="true"
+                                        [class.active]="row1.expanded" [title]="row.pathVar+'['+(i)+']'"
+                                        (click)="toggleAccordion($event, row1)"
+                                        [style.border-color]="'#'+row.value[i].color">
+                                        <span [attr.data-target]="row.pathVar" [attr.data-index]="i"
+                                            [attr.data-table]="true">&#123;&nbsp;</span>
+                                        <span [attr.data-target]="row.pathVar" [attr.data-index]="i"
+                                            [attr.data-table]="true" [innerHTML]="row.jsonString[i]"></span>
+                                        <!-- <span class="meta">
+                                        <nb-icon icon="more-horizontal-outline"
+                                        [nbContextMenu]="[{title: row.pathVar+'['+(i)+']' }]"></nb-icon>
+                                    </span> -->
+                                    </div>
+                                    <!-- Object Body -->
+                                    <div [attr.data-target]="row.pathVar" [attr.data-index]="i" [attr.data-table]="true"
+                                        class="w-100 acc" [class.active]="row1.expanded"
+                                        [style.border-color]="'#'+row.value[i].color" [style.border-radius]="'10px'">
+                                        <h6 [attr.data-target]="row.pathVar" [attr.data-index]="i"
+                                            [attr.data-table]="true" class="fw-400 clr-url p-0-75"
+                                            (click)="row1.expanded = false">&#123;&nbsp;
+                                        </h6>
+                                        <div [attr.data-target]="row.pathVar" [attr.data-index]="i"
+                                            [attr.data-table]="true" *ngIf="row1.expanded">
+                                            <ng-container *ngTemplateOutlet="listTemplate;context:{output: row1}">
+                                            </ng-container>
+                                        </div>
+                                        <h6 [attr.data-target]="row.pathVar" [attr.data-index]="i"
+                                            [attr.data-table]="true" class="fw-400 clr-url p-0-75"
+                                            (click)="row1.expanded = false">},</h6>
+                                    </div>
+                                </div>
+                                <!-- List of Input -->
+                                <div [attr.data-target]="row.pathVar" [attr.data-index]="i" [attr.data-table]="true"
+                                    *ngIf="row.type !== 'object'" class="w-100 acc-list">
+                                    <ng-container *ngTemplateOutlet="inputTemplate;context:{row: row1}">
+                                    </ng-container>
+                                </div>
+                            </nb-list-item>
+                        </nb-list>
+                        <h6 class="fw-400 clr-url p-0-75" (click)="row.expanded = false">],</h6>
+                    </div>
+                </div>
+            </div>
+        </nb-list-item>
+    </nb-list>
+</ng-template>
+
+<!-- <ng-template #listTemplate let-row="row" let-value="value" let-pathVar="pathVar" let-rowKey="rowKey">
+    <nb-accordion-item #ac class="w-100">
+        <nb-accordion-item-header [title]="pathVar" class="w-100">
+            <span class="ellipsis">
+                <span *ngIf="rowKey"> {{rowKey}}:&nbsp; </span>
+                &#123;&nbsp;
+                <span *ngIf="ac.collapsed">
+                    {{stringifyJSON(value)}}
+                </span>
+            </span>
+        </nb-accordion-item-header>
+        <nb-accordion-item-body [style.border]="'2px solid #' + (value.color || '403A38')">
+            <ng-container *ngTemplateOutlet="listTemplate;context:{output: row}">
+            </ng-container>
+            },
+        </nb-accordion-item-body>
+    </nb-accordion-item>
+</ng-template> -->
+
+<ng-template #inputTemplate let-row="row">
+    <!-- <div *ngIf="row.type != 'boolean'"> -->
+    <span [attr.data-target]="row.pathVar" *ngIf="row.key" [title]="row.pathVar">
+        {{row.key}}&nbsp; :&nbsp;
+    </span>
+    <!-- <input *ngIf="row.key != 'color'" nbInput [value]="row.value" [type]="row.type" /> -->
+    <span [attr.data-target]="row.pathVar" [contenteditable]="isEdit">
+        <span [attr.data-target]="row.pathVar" *ngIf="row.type == 'string'">"</span><span
+            [attr.data-target]="row.pathVar" [class.clr-blue]="row.type == 'boolean'"
+            [class.clr-na]="row.template == 'na'" [class.clr-date]="row.dateTimeStr" *ngIf="!row.url" class="fw-700"
+            [title]="row.dateTimeStr ?
+            row.dateTimeStr : ''">{{row.value}}</span><a [attr.data-target]="row.pathVar" *ngIf="row.url"
+            [href]="row.url" class="fw-700" target="_blank">{{row.value}}</a><span [attr.data-target]="row.pathVar"
+            *ngIf="row.type == 'string'">"</span>
+    </span>,
+    <input *ngIf="isEdit && row.key == 'color'" type="color" [value]="'#'+row.value">
+    <!-- </div> -->
+    <!-- <div *ngIf="row.type == 'boolean'">
+        <nb-toggle labelPosition="start" [checked]="row.value" status="primary">{{row.key}}</nb-toggle>
+    </div> -->
+</ng-template>
+
+<ng-template #popoverTemplate let-path="path" let-type="type">
+    <nb-list>
+        <nb-list-item>{{path}}</nb-list-item>
+        <nb-list-item>Type: {{type}}</nb-list-item>
+    </nb-list>
+</ng-template>
+
+<app-context-menu *ngIf="isDisplayContextMenu" [ngStyle]="getRightClickMenuStyle()"
+    [contextMenuItems]="contextMenuItems">
+</app-context-menu>
+
+<!-- <table [nbTreeGrid]="dataSource" nbSort (sort)="changeSort($event)" equalColumnsWidth>
+
+    <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
+    <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
+
+    <ng-container [nbTreeGridColumnDef]="customColumn">
+        <th nbTreeGridHeaderCell [nbSortHeader]="getDirection(customColumn)" *nbTreeGridHeaderCellDef>
+            {{customColumn}}
+        </th>
+
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">
+
+            <nb-tree-grid-row-toggle [expanded]="row.expanded" *ngIf="row.data.kind === 'dir'">
+            </nb-tree-grid-row-toggle>
+
+            {{row.data.name}}
+
+        </td>
+    </ng-container>
+
+    <ng-container *ngFor="let column of defaultColumns" [nbTreeGridColumnDef]="column">
+        <th nbTreeGridHeaderCell [nbSortHeader]="getDirection(column)" *nbTreeGridHeaderCellDef>
+            {{column}}
+        </th>
+
+        <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data[column]}}</td>
+    </ng-container>
+
+</table> -->

@@ -1,38 +1,100 @@
-<input type="text" class="text" label="Label" />
+<!-- <input type="text" class="text" label="Label" /> -->
 
-<nb-card size="small">
-    <nb-card-body class="example-items-rows">
-  
-      <input
-        [formControl]="inputFormControl"
-        nbInput
-        type="text"
-        placeholder="Form control"
-        [nbAutocomplete]="autoControl" />
-  
-      <nb-autocomplete #autoControl>
-  
-        <nb-option *ngFor="let option of filteredControlOptions$ | async" [value]="option">
-          {{ option }}
-        </nb-option>
-  
-      </nb-autocomplete>
-  
-      <input
-        [ngModel]="value"
-        (ngModelChange)="onModelChange($event)"
-        nbInput
-        type="text"
-        placeholder="ngModel"
-        [nbAutocomplete]="autoNgModel" />
-  
-      <nb-autocomplete #autoNgModel>
-  
-        <nb-option *ngFor="let option of filteredNgModelOptions$ | async" [value]="option">
-          {{ option }}
-        </nb-option>
-  
-      </nb-autocomplete>
-  
+<nb-card>
+    <nb-card-body>
+        <nb-stepper orientation="vertical">
+            <nb-step [label]="labelOne">
+                <ng-template #labelOne>Setup</ng-template>
+                <!-- <h5>input</h5> -->
+                <nb-card>
+                    <nb-list>
+                        <!-- <nb-list-item>
+                            <nb-select placeholder="type">
+                                <nb-option *ngFor="let option of types">{{option}}</nb-option>
+                            </nb-select>
+                        </nb-list-item> -->
+                        <nb-list-item>
+                            <input #autoInput nbInput type="text" (input)="onChange()" placeholder="name"
+                                [nbAutocomplete]="auto" />
+
+                            <nb-autocomplete #auto (selectedChange)="onSelectionChange($event)">
+
+                                <nb-option *ngFor="let option of filteredOptions$ | async" [value]="option">
+                                    {{ option }}
+                                </nb-option>
+
+                            </nb-autocomplete>
+                        </nb-list-item>
+
+                        <nb-list-item>
+                            <table [nbTreeGrid]="data" equalColumnsWidth>
+                                <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
+                                <tr nbTreeGridRow [clickToToggle]="false" *nbTreeGridRowDef="let row; columns: allColumns"></tr>
+                      
+                                <ng-container [nbTreeGridColumnDef]="customColumn">
+                                    <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>{{customColumn}}</th>
+                                  <td nbTreeGridCell *nbTreeGridCellDef="let row">
+                      
+                                    <!-- {{row.data.name}} -->
+                                    <nb-select placeholder="type">
+                                        <nb-option *ngFor="let option of types">{{option}}</nb-option>
+                                    </nb-select>
+                                  </td>
+                                </ng-container>
+                      
+                                <ng-container *ngFor="let column of defaultColumns" [nbTreeGridColumnDef]="column">
+                                    <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>{{column}}</th>
+                                  <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data[column]}}</td>
+                                </ng-container>
+                      
+                              </table>
+                        </nb-list-item>
+
+                        <nb-list-item>
+                            <nb-checkbox (checkedChange)="toggle($event)">share</nb-checkbox>
+                        </nb-list-item>
+
+
+                        <!-- <nb-list-item *ngIf="!checked">
+                            <nb-checkbox (checkedChange)="toggle($event)">Toggle me</nb-checkbox>
+                        </nb-list-item> -->
+                    </nb-list>
+                </nb-card>
+                <button nbButton disabled nbStepperNext>prev</button>
+                <button nbButton nbStepperNext>next</button>
+            </nb-step>
+            <nb-step *ngIf="checked" [label]="labelTwo">
+                <ng-template #labelTwo>Share</ng-template>
+                <h4>Step content #2</h4>
+                <p class="lorem">
+                    Lorizzle ipsum dolizzle stuff fizzle, consectetuer adipiscing break it down.
+                    Nullizzle sapien velizzle, my shizz pimpin', shizzle my nizzle crocodizzle shut the shizzle up,
+                    gravida vizzle, dang.
+                </p>
+                <button nbButton nbStepperPrevious>prev</button>
+                <button nbButton nbStepperNext>next</button>
+            </nb-step>
+            <nb-step label="Done">
+                <h4>Step content #3</h4>
+                <p class="lorem">
+                    Lorizzle ipsum dolizzle stuff fizzle, consectetuer adipiscing break it down.
+                    Nullizzle sapien velizzle, my shizz pimpin', shizzle my nizzle crocodizzle shut the shizzle up,
+                    gravida vizzle, dang.
+                </p>
+                <button nbButton nbStepperPrevious>prev</button>
+                <button nbButton nbStepperNext>done</button>
+            </nb-step>
+            <!-- <nb-step [label]="labelFour">
+                <ng-template #labelFour>Fourth step</ng-template>
+                <h4>Step content #4</h4>
+                <p class="lorem">
+                    Lorizzle ipsum dolizzle stuff fizzle, consectetuer adipiscing break it down.
+                    Nullizzle sapien velizzle, my shizz pimpin', shizzle my nizzle crocodizzle shut the shizzle up,
+                    gravida vizzle, dang.
+                </p>
+                <button nbButton nbStepperPrevious>prev</button>
+                <button nbButton disabled nbStepperNext>next</button>
+            </nb-step> -->
+        </nb-stepper>
     </nb-card-body>
-  </nb-card>
+</nb-card>

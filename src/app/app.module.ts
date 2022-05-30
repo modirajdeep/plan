@@ -1,8 +1,33 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
-import { NbThemeModule, NbAutocompleteModule, NbCardModule, NbSidebarModule, NbLayoutModule, NbButtonModule } from '@nebular/theme'
+import {
+  NbThemeModule,
+  NbAutocompleteModule,
+  NbTreeGridModule,
+  NbSearchModule,
+  NbSelectModule,
+  NbInputModule,
+  NbCardModule,
+  NbSidebarModule,
+  NbStepperModule,
+  NbLayoutModule,
+  NbButtonModule,
+  NbListModule,
+  NbCheckboxModule,
+  NbActionsModule,
+  NbToggleModule,
+  NbPopoverModule,
+  NbContextMenuModule,
+  NbMenuModule,
+  NbThemeService,
+  NbIconModule,
+  NbToastrModule,
+  NbWindowModule,
+  NbTooltipModule,
+} from '@nebular/theme'
 
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
@@ -12,16 +37,64 @@ import { PlanFormComponent } from './plan-form/plan-form.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { AppRoutingModule } from './app-routing.module';
+import { JsonComponent } from './json/json.component';
+import { ContextMenuComponent } from './context-menu/context-menu.component';
 
+const ToastrConfig: any = {
+  position: 'bottom-end',
+  status: 'info',
+  icon: 'done-all',
+  preventDuplicates: true,
+  duplicatesBehaviour: 'all'
+}
+
+const WindowConfig: any = {
+  buttons: {
+    minimize: false,
+    maximize: false,
+    fullScreen: false,
+  }
+}
 @NgModule({
-  imports: [NbThemeModule.forRoot(),
-    BrowserModule, FormsModule,ReactiveFormsModule, NbAutocompleteModule, NbCardModule, NbSidebarModule, NbLayoutModule, NbButtonModule, BrowserAnimationsModule, NbThemeModule.forRoot({ name: 'default' }), NbEvaIconsModule, AppRoutingModule],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    NbTreeGridModule,
+    NbSearchModule,
+    ReactiveFormsModule,
+    NbSelectModule,
+    NbAutocompleteModule,
+    NbInputModule,
+    NbCardModule,
+    NbStepperModule,
+    NbSidebarModule,
+    NbLayoutModule,
+    NbButtonModule, BrowserAnimationsModule,
+    NbThemeModule.forRoot({ name: 'default' }),
+    NbEvaIconsModule,
+    AppRoutingModule,
+    NbListModule,
+    NbCheckboxModule,
+    NbActionsModule,
+    NbToggleModule,
+    NbPopoverModule,
+    NbContextMenuModule,
+    NbIconModule,
+    NbMenuModule.forRoot(),
+    NbToastrModule.forRoot(ToastrConfig),
+    NbWindowModule.forRoot(WindowConfig),
+    NbTooltipModule
+  ],
   declarations: [
     AppComponent,
     HelloComponent,
     PlanListComponent,
     PlanFormComponent,
+    JsonComponent,
+    ContextMenuComponent,
   ],
   bootstrap: [AppComponent],
+  providers: [NbThemeService]
 })
-export class AppModule {}
+export class AppModule { }

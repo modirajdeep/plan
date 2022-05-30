@@ -1,16 +1,46 @@
 <nb-layout>
 
   <nb-layout-header fixed>
-  <!-- Insert header here -->
+    <nb-search type="modal-half"></nb-search>
+    <!-- <h1 style="margin-left: 20px;">info bank : plan form</h1> -->
+    <h1 style="margin-left: 20px;">info.gen - preview</h1>
+    <!-- Insert header here -->
+  </nb-layout-header>
+
+  <nb-layout-header subheader>
+    <nb-actions>
+      <nb-action *ngFor="let action of actions" class="clr-url" [nbTooltip]="action.title" nbTooltipStatus="info"
+        [nbTooltipTrigger]="action.icon && !action.disabled ? 'hover' : 'noop'" nbTooltipPlacement="bottom"
+        [icon]="action.icon" [badgeDot]="action.badgeDot" [disabled]="action.disabled" [link]="action.link"
+        (click)="handleAction(action)">
+        {{action.title}}</nb-action>
+    </nb-actions>
   </nb-layout-header>
 
   <nb-layout-column>
-    <app-plan-form></app-plan-form>
-    
+    <!-- <app-plan-form></app-plan-form> -->
+    <app-json></app-json>
   </nb-layout-column>
 
   <nb-layout-footer fixed>
-  <!-- Insert footer here -->
+    {{time}}
   </nb-layout-footer>
 
 </nb-layout>
+
+<ng-template #pasteTemplate let-data>
+  <textarea style="width: 50vw;height: 25vh;" nbInput fullWidth placeholder="input" [(ngModel)]="input" required
+    (ngModelChange)="handleInput($event)" [status]="inputStatus">
+</textarea>
+  <button style="margin: 1rem;" nbButton outline status="info" (click)="handleAction({title: 'paste'})">paste</button>
+  <button style="margin: 1rem;" nbButton status="primary" [disabled]="inputStatus != 'success'"
+    (click)="handleDone()">done</button>
+</ng-template>
+
+<ng-template #urlTemplate let-data>
+  <input type="text" style="width: 50vw;" nbInput fullWidth placeholder="url" [(ngModel)]="input" required
+    (ngModelChange)="handleInput($event)" [status]="inputStatus">
+  <button style="margin: 1rem;" nbButton outline status="info" (click)="handleAction({title: 'paste'})">paste</button>
+  <button style="margin: 1rem;" nbButton status="primary" [disabled]="inputStatus != 'success'"
+    (click)="handleDone()">done</button>
+</ng-template>

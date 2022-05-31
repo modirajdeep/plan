@@ -1,20 +1,6 @@
-import { ChangeDetectionStrategy, Component, ViewChild, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { Observable, of } from 'rxjs';
-
-import { FormControl } from '@angular/forms';
-import { map, startWith } from 'rxjs/operators';
-
-interface TreeNode<T> {
-  data: T;
-  children?: TreeNode<T>[];
-  expanded?: boolean;
-}
-
-interface FSEntry {
-  name: string;
-  value: any;
-  type: string;
-}
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-plan-form',
@@ -27,7 +13,7 @@ export class PlanFormComponent implements OnInit {
   defaultColumns = ['name', 'value'];
   allColumns = [...this.defaultColumns, this.customColumn,];
 
-  data: TreeNode<FSEntry>[] = [
+  data: any = [
     {
       data: { name: 'name', value: 'HDFC', type: '' },
     },

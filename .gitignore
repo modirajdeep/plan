@@ -3,3 +3,7 @@ node_modules
 package-lock.json
 .firebase
 dist
+# Firebase
+.firebase
+*-debug.log
+.runtimeconfig.json

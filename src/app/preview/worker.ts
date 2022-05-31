@@ -9,11 +9,12 @@ export const Types = {
 };
 export const MaxKeys = 8;
 export const KeySortOrder = ['id', 'title', 'label', 'username', 'name', 'value', 'type'];
+export const MaxDepth = 1;
 
-export const generateSchema = (json, pathVar = '', that: PreviewComponent) => {
+export const generateSchema = (json, pathVar = '', depth = 0, that: PreviewComponent) => {
     let result = [];
     if (NonObjectTypes.includes(typeof json)) {
-        result = getRow(pathVar, '', json, that);
+        result = getRow(pathVar, '', json, depth, that);
     } else if (ObjectType == typeof json) {
         let objectKeys = [];
         try {
@@ -21,14 +22,16 @@ export const generateSchema = (json, pathVar = '', that: PreviewComponent) => {
         } catch (error) {
             // handleError(error, 'Error generating object keys', json);
         }
-        objectKeys.forEach(key => result.push(getRow(pathVar, key, json[key], that)))
+        objectKeys.forEach(key => result.push(getRow(pathVar, key, json[key], depth, that)))
     }
     return result;
 }
 
-export const getRow = (pathVar: string, key: string, value, that: PreviewComponent) => {
+export const getRow = (pathVar: string, key: string, value, depth: number, that: PreviewComponent) => {
     let result: any = { key, value, type: typeof value, template: 'input' };
+    result.depth = depth + 1;
     result.pathVar = pathVar ? pathVar + '.' + key : key;
+    console.log({ pathVar, key, value, depth })
     // transformations
     if (isUndefined(value)) { // na
         result.template = 'na';
@@ -57,15 +60,23 @@ export const getRow = (pathVar: string, key: string, value, that: PreviewCompone
             result.template = 'list';
             result.type = typeof value[0];
             result.listSummary = '&nbsp;'
-            result.valueMap = value.map((v, i) => generateSchema(v, `${result.pathVar}[${i}]`, that));
+            if (depth <= MaxDepth) {
+                result.valueMap = value.map((v, i) => generateSchema(v, `${result.pathVar}[${i}]`, result.depth, that));
+            } else {
+                result.valueMap = [];
+            }
             if (ObjectType == result.type) { // list of objects
                 result.value = value.map(v => sortObject(v))
                 result.jsonString = result.valueMap.map(m => stringifyJSON(m, that));
-                result.listSummary += '&#123;&nbsp;' + result.jsonString[0].slice(0, -2);
+                // if(result.jsonString[0]) {
+
+                // }
+                result.listSummary += '&#123;&nbsp;' + (result.jsonString[0] ? result.jsonString[0].slice(0, -2) : ''); // TODO
                 let columns = [];
                 let objectKeys = Object.keys(result.value[0]);
                 let maxKeys = MaxKeys;
                 if (objectKeys.length < maxKeys) maxKeys = objectKeys.length;
+                // adding columns until maxKeys
                 for (let i = 0; i < maxKeys; i++) {
                     const key = objectKeys[i];
                     let val = result.value[0][key];
@@ -83,12 +94,53 @@ export const getRow = (pathVar: string, key: string, value, that: PreviewCompone
         } else { // objects
             result.template = ObjectType;
             result.value = sortObject(result.value);
-            result.valueMap = generateSchema(result.value, result.pathVar, that);
+            result.valueMap = generateSchema(result.value, result.pathVar, result.depth, that);
             result.jsonString = stringifyJSON(result.valueMap, that);
         }
         result.listSummary += '&nbsp;]';
     }
     return result;
+}
+
+export const sth = (count) => {
+    // let maxKeys = MaxKeys;
+    // const objectKeyCount = map.length;
+    // let response = ' ';
+    // if (objectKeyCount < maxKeys) maxKeys = objectKeyCount;
+    // for (let i = 0; i < maxKeys; i++) {
+    //     let { value, key } = map[i];
+    //     if (that.hideNa && isUndefined(value)) {
+    //         if (maxKeys <= (MaxKeys * 1.8)) maxKeys++;
+    //     } else {
+    //         response += `${key} : ${htmlOutput(map[i], i)}`;
+    //         if (i < (objectKeyCount - 1) && i < maxKeys - 1) {
+    //             response += ', '
+    //         }
+    //     }
+    // }
+    // if (objectKeyCount > maxKeys) {
+    //     let ellipsisString = response.charAt(response.length - 2) == ',' ? '... } ,' : ', ... } ,';
+    //     response += ellipsisString;
+    // } else {
+    //     response += ' } ,'
+    // }
+    // call1 = sth(map.length);
+    // let objectKeys = Object.keys(result.value[0]);
+    // let maxKeys = MaxKeys;
+    // if (objectKeys.length < maxKeys) maxKeys = objectKeys.length;
+    // // adding columns until maxKeys
+    // for (let i = 0; i < maxKeys; i++) {
+    //     const key = objectKeys[i];
+    //     let val = result.value[0][key];
+    //     if (NonObjectTypes.includes(typeof val)) {
+    //         columns.push(key)
+    //     } else {
+    //         if (maxKeys <= (MaxKeys * 1.8)) maxKeys++;
+    //     }
+    // }
+    // call2 = sth()
+    // // start sth
+    // let maxKeys = MaxKeys;
 }
 
 export const stringifyJSON = (map, that: PreviewComponent) => {

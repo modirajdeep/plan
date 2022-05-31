@@ -2,13 +2,7 @@ import { NbMenuItem } from '@nebular/theme';
 import * as jp from 'jsonpath';
 import { generateSchema } from './worker';
 import { PreviewComponent } from './preview.component';
-
-export interface JsonActions {
-    action?: string;
-    target: string;
-    type: string;
-    index: string;
-}
+import { JsonActions } from '../interfaces';
 
 export const initialize = (inputString, that: PreviewComponent) => {
     if (inputString) {
@@ -17,7 +11,7 @@ export const initialize = (inputString, that: PreviewComponent) => {
             jsonData = parseJSON(jsonData, that);
         }
         that.input = JSON.stringify(jsonData);
-        let result = generateSchema({ data: removeEmpty(jsonData) }, '', that);
+        let result = generateSchema({ data: removeEmpty(jsonData) }, '', 0, that);
         result[0].expanded = true;
         console.log(result[0]);
         that.zone.run(() => {
@@ -36,32 +30,28 @@ export const handleAction = (params: JsonActions, that: PreviewComponent) => {
         targetStr += `[${index}]`;
     }
     let data, result;
-    switch (action) {
-        case 'copy-path':
-            that.clipboard.copy(targetStr);
-            that.toastrService.show('copied path to clipboard');
-            break;
-        case 'copy-value':
-            data = parseJSON(that.input, that);
-            result = jp.query({ data }, '$.' + targetStr);
-            let toCopy = result.length > 1 ? result : result[0];
-            if (typeof toCopy == 'object') {
-                toCopy = JSON.stringify(toCopy);
-            }
-            that.clipboard.copy(toCopy.toString());
-            that.toastrService.show('copied value to clipboard');
-            break;
-        case 'table-view':
-            // data = parseJSON(that.output, that);
-            // TODO table view
-            console.log(target, index, that.output);
-            that.cd.markForCheck();
-            that.toastrService.show('under construction', 'view as table', { status: 'primary', icon: 'alert-triangle-outline' });
-        case 'share':
-            that.toastrService.show('under construction', 'share', { status: 'primary', icon: 'alert-triangle-outline' });
-        // data.tableView = true;
+    if (action == 'copy-path') {
+        that.clipboard.copy(targetStr);
+        that.toastrService.show('copied path to clipboard');
+    } else if (action == 'copy-value') {
+        data = parseJSON(that.input, that);
+        result = jp.query({ data }, '$.' + targetStr);
+        let toCopy = result.length > 1 ? result : result[0];
+        if (typeof toCopy == 'object') {
+            toCopy = JSON.stringify(toCopy);
+        }
+        that.clipboard.copy(toCopy.toString());
+        that.toastrService.show('copied value to clipboard');
+    } else if (action == 'table-view') {
+        // data = parseJSON(that.output, that);
+        // TODO table view
+        console.log(target, index, that.output);
+        that.cd.markForCheck();
+        that.toastrService.show('under construction', 'view as table', { status: 'primary', icon: 'alert-triangle-outline' });
+    } else if (action) {
+        that.toastrService.show('under construction', action, { status: 'primary', icon: 'alert-triangle-outline' });
     }
-    that.router.navigate(['/']);
+    that.router.navigate(['/preview']);
 }
 
 export const TestJSON = {
@@ -70,30 +60,41 @@ export const TestJSON = {
     born: '1994-09-01T15:09:56.704Z',
     color: 'A77179',
     pronoun: 'He/Him',
-    nationality: { name: 'Indian', color: '000080' },
+    // nationality: { name: 'Indian', color: '000080' },
     profiles: [
-        { name: 'LinkedIn', url: 'https://www.linkedin.com/in/modirajdeep/' },
-        { name: 'GitHub', url: 'https://github.com/modirajdeep' },
+        {
+            name: 'LinkedIn', url: 'https://www.linkedin.com/in/modirajdeep/',
+            email: [
+                { name: 'Personal', id: 'modi.rajdeep@gmail.com' },
+                { name: 'Office', id: 'rajdeep.modi@wtsenergy.com' }
+            ],
+        },
+        {
+            name: 'GitHub', url: 'https://github.com/modirajdeep',
+            email: [
+                { name: 'Personal', id: 'modi.rajdeep@gmail.com' }
+            ],
+        },
         { name: 'Instagram', url: 'https://www.instagram.com/modirajdeep/' },
         { name: 'Facebook', url: 'https://www.facebook.com/modirajdeep/' }
     ],
-    email: [
-        { name: 'Personal', id: 'modi.rajdeep@gmail.com' },
-        { name: 'Office', id: 'rajdeep.modi@wtsenergy.com' }
-    ],
-    address: {
-        city: 'The Hague',
-        country: 'The Netherlands',
-        color: 'FF9B00',
-    },
-    call: [
-        { type: "office", number: "+31629173380" },
-        { type: "personal", number: "+919015502234" }
-    ],
-    test: null,
-    luckyNumbers: [1, 12, 16, 9],
-    wishlist: ['apples', 'mangoes'],
-    isActive: true
+    // email: [
+    //     { name: 'Personal', id: 'modi.rajdeep@gmail.com' },
+    //     { name: 'Office', id: 'rajdeep.modi@wtsenergy.com' }
+    // ],
+    // address: {
+    //     city: 'The Hague',
+    //     country: 'The Netherlands',
+    //     color: 'FF9B00',
+    // },
+    // call: [
+    //     { type: "office", number: "+31629173380" },
+    //     { type: "personal", number: "+919015502234" }
+    // ],
+    // test: null,
+    // luckyNumbers: [1, 12, 16, 9],
+    // wishlist: ['apples', 'mangoes'],
+    // isActive: true
 }
 
 export const contextMenuHandler = (event, that: PreviewComponent) => {
@@ -108,22 +109,25 @@ export const contextMenuHandler = (event, that: PreviewComponent) => {
     const status = 'info';
     let contextMenuItems: Array<NbMenuItem> = [
         {
-            title: 'copy', expanded: true, icon: 'copy-outline',
-            children: [
-                {
-                    title: 'address', link,
-                    badge: { text, status },
-                    queryParams: { action: 'copy-path', ...params }
-                },
-                {
-                    title: 'value', link,
-                    queryParams: { action: 'copy-value', ...params }
-                },
-            ]
+            title: 'address', link, icon: 'copy-outline',
+            badge: { text, status },
+            queryParams: { action: 'copy-path', ...params }
+        },
+        {
+            title: 'value', link, icon: 'copy-outline',
+            queryParams: { action: 'copy-value', ...params }
         },
         {
             title: 'share', icon: 'share-outline', link,
             queryParams: { action: 'share', ...params }
+        },
+        {
+            title: 'bookmark', icon: 'bookmark-outline', link,
+            queryParams: { action: 'bookmark', ...params }
+        },
+        {
+            title: 'history', icon: 'hard-drive-outline', link,
+            queryParams: { action: 'history', ...params }
         }
     ];
     if (table) {

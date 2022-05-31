@@ -4,6 +4,8 @@ import * as moment from 'moment-timezone';
 import { NbToastrService, NbWindowService } from '@nebular/theme';
 import { AppService } from './app.service';
 import { isURL } from './preview/worker';
+
+// const DefaultActions = 
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',
@@ -25,7 +27,13 @@ export class AppComponent implements OnInit, OnDestroy {
     },
     {
       title: 'log in',
-      icon: 'log-in-outline'
+      icon: 'log-in-outline',
+      link: '/auth/login'
+    },
+    {
+      title: 'preview',
+      icon: 'bulb-outline',
+      link: '/preview'
     },
     {
       title: 'save',
@@ -49,15 +57,15 @@ export class AppComponent implements OnInit, OnDestroy {
     },
     {
       title: 'paste',
-      icon: 'code-outline',
-      // icon: 'clipboard-outline',
+      // icon: 'code-outline',
+      icon: 'clipboard-outline',
       template: 'paste',
       badgeDot: true
     },
     {
       title: 'copy',
-      icon: 'code-download-outline',
-      // icon: 'copy-outline',
+      // icon: 'code-download-outline',
+      icon: 'copy-outline',
     },
     {
       title: 'share',
@@ -72,9 +80,17 @@ export class AppComponent implements OnInit, OnDestroy {
       icon: 'collapse-outline'
     },
     {
+      title: 'explore',
+      icon: 'browser-outline',
+    },
+    {
+      title: 'bookmarks',
+      icon: 'bookmark-outline'
+    },
+    {
       title: 'history',
       icon: 'hard-drive-outline'
-    }
+    },
   ]
 
   constructor(
@@ -118,11 +134,12 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleAction(action) {
-    if (action.template) {
-      this.openWindow(this[`${action.template}Template`], action.title);
-    } else {
-      this.toastrService.show('under construction', action.title, { status: 'primary', icon: 'alert-triangle-outline' });
+  handleAction({ template, title, link }) {
+    if (template) {
+      console.log({ template, title })
+      this.openWindow(this[`${template}Template`], title);
+    } else if (!link) {
+      this.toastrService.show('under construction', title, { status: 'primary', icon: 'alert-triangle-outline' });
     }
   }
 

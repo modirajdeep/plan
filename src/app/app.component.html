@@ -3,22 +3,24 @@
   <nb-layout-header fixed>
     <img style="height: 3rem;" src="assets/favicon.png" alt="info.gen logo">
     <h1 style="margin-left: 20px;">info.gen <span style="color:#2157a3">- preview</span></h1>
-    <nb-search style="margin-left: 2rem;" type="modal-half"></nb-search>
+    <!-- <nb-search style="margin-left: 2rem;" type="modal-half"></nb-search> -->
   </nb-layout-header>
 
   <nb-layout-header subheader>
     <nb-actions>
       <nb-action *ngFor="let action of actions" class="clr-url" [nbTooltip]="action.title" nbTooltipStatus="info"
         [nbTooltipTrigger]="action.icon && !action.disabled ? 'hover' : 'noop'" nbTooltipPlacement="bottom"
-        [icon]="action.icon" [badgeDot]="action.badgeDot" [disabled]="action.disabled" [link]="action.link"
-        (click)="handleAction(action)">
+        [icon]="action.icon" [badgeDot]="action.badgeDot" [badgeText]="action.badgeText"
+        [badgeStatus]="action.badgeStatus" [disabled]="action.disabled" [link]="action.link"
+        (click)="handleAction(action)" [routerLink]="action.link">
         {{action.title}}</nb-action>
     </nb-actions>
+    <!-- <a routerLink="/preview" routerLinkActive="active">preview</a>
+    <a routerLink="/auth/login" routerLinkActive="active">login</a> -->
   </nb-layout-header>
 
   <nb-layout-column>
-    <!-- <app-plan-form></app-plan-form> -->
-    <app-preview></app-preview>
+    <router-outlet></router-outlet>
   </nb-layout-column>
 
   <nb-layout-footer fixed>
@@ -27,6 +29,8 @@
 
 </nb-layout>
 
+<!-- <app-plan-form></app-plan-form> -->
+<!-- <app-preview></app-preview> -->
 <ng-template #pasteTemplate let-data>
   <textarea style="width: 50vw;height: 25vh;" nbInput fullWidth placeholder="input" [(ngModel)]="input" required
     (ngModelChange)="handleInput($event)" [status]="inputStatus">

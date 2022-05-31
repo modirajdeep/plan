@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "plan-84299"
+  },
+  "targets": {
+    "plan-84299": {
+      "hosting": {
+        "info-gen": [
+          "plan-84299"
+        ]
+      }
+    }
   }
 }

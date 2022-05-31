@@ -1,21 +1,12 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, HostListener, NgZone, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NbMenuItem, NbToastrService } from '@nebular/theme';
+import { NbMenuItem, NbSortDirection, NbSortRequest, NbToastrService, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
+import { Observable } from 'rxjs';
 import { AppService } from '../app.service';
-import { initialize, TestJSON, contextMenuHandler, handleError, handleAction, JsonActions } from './helpers';
-import { htmlOutput } from './worker'
-
-import { NbSortDirection, NbSortRequest, NbTreeGridDataSource, NbTreeGridDataSourceBuilder } from '@nebular/theme';
-
-// https://www.concretepage.com/angular/angular-keyvaluediffers
-
-interface TreeNode<T> {
-  data: T;
-  children?: TreeNode<T>[];
-  expanded?: boolean;
-}
-
+import { JsonActions, TreeNode } from '../interfaces';
+import { contextMenuHandler, handleAction, handleError, initialize, TestJSON } from './helpers';
+import { htmlOutput } from './worker';
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.component.html',
@@ -24,6 +15,7 @@ interface TreeNode<T> {
 export class PreviewComponent implements OnInit, OnDestroy {
   // Component State
   isEdit = false;
+  isSchema = true;
   hideNa = true;
   input = '';
   output;
@@ -51,7 +43,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       top: `${this.contextY}px`
     }
   }
-
+  
   // Subscriptions
   appServiceSub;
   queryParamsSub;
@@ -63,9 +55,9 @@ export class PreviewComponent implements OnInit, OnDestroy {
     public route: ActivatedRoute,
     public appService: AppService,
     public toastrService: NbToastrService,
-    public dataSourceBuilder: NbTreeGridDataSourceBuilder<any> //
+    public dataSourceBuilder: NbTreeGridDataSourceBuilder<any> //,
   ) { }
-  ngOnInit(): void {
+  async ngOnInit() {
     initialize(JSON.stringify(TestJSON), this);
     this.appServiceSub = this.appService.events.subscribe(data => {
       if (data.type == 'paste') {
